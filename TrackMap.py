@@ -87,21 +87,18 @@ class TrackMapApp:
         ).pack(fill="x", padx=10, pady=10)
 
     def geocoding(self):
-        key = "9883cac5-0db3-4446-8507-a59b80acf13d"  # Your Graphhopper API key
+        key = "9883cac5-0db3-4446-8507-a59b80acf13d"  # change to other api key
         start_location = self.start_location.get()
         destination = self.destination.get()
         vehicle = self.vehicle.get()
 
         if start_location and destination:
-            # Geocode start and end locations
             orig = self.get_geocoding_data(start_location, key)
             dest = self.get_geocoding_data(destination, key)
 
             if orig and dest:
-                # Request route data
                 route_data = self.get_route_data(orig, dest, vehicle, key)
                 if route_data:
-                    # Display distance, time, and directions in the GUI
                     distance_km = route_data["distance"] / 1000
                     time_sec = route_data["time"] / 1000
                     self.display_route_info(
