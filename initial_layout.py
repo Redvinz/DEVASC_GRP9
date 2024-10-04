@@ -60,6 +60,16 @@ class TrackMapApp:
 
     def geocoding(self):
         # palagay nung mismong method
+
+        start_location = self.start_location.get()
+        destination = self.destination.get()
+        vehicle_type = self.vehicle.get()
+
+        #testing lang
+        print(f"Start Location: {start_location}")
+        print(f"Destination: {destination}")
+        print(f"Vehicle Type: {vehicle_type}")
+
         pass
 
     def reset(self):
