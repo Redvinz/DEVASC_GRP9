@@ -8,83 +8,73 @@ class TrackMapApp:
     def __init__(self, master):
         self.master = master
         master.title("TrackMap")
-        master.geometry("350x550")
+        master.geometry("1000x600")
 
         # Configure style
         style = ttk.Style()
         style.configure("Black.TButton", foreground="white", background="black")
 
+        # Create main frame
+        main_frame = ttk.Frame(master)
+        main_frame.pack(fill=tk.BOTH, expand=True)
+
+        # Create left frame for controls (1/3 width)
+        left_frame = ttk.Frame(main_frame, width=400)  # Set a fixed width
+        left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=False)
+        left_frame.pack_propagate(False)  # Prevent the frame from shrinking
+
+        # Create right frame for map placeholder (2/3 width)
+        right_frame = ttk.Frame(main_frame)
+        right_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
         # Title
-        ttk.Label(master, text="TrackMap", font=("Arial", 16, "bold")).pack(pady=10)
-        ttk.Label(master, text="GraphHopper Pro", font=("Arial", 10)).pack()
+        ttk.Label(left_frame, text="TrackMap", font=("Arial", 16, "bold")).pack(pady=10)
+        ttk.Label(left_frame, text="GraphHopper Pro", font=("Arial", 10)).pack()
 
         # Vehicles
-        ttk.Label(master, text="Enter a vehicle profile from the list:").pack(
-            anchor="w", padx=10, pady=(10, 0)
-        )
+        ttk.Label(left_frame, text="Enter a vehicle profile from the list:").pack(anchor="w", pady=(10, 0))
         self.vehicle = tk.StringVar(value="car")
-        ttk.Radiobutton(
-            master,
-            text="Car\nFastest travel by road",
-            variable=self.vehicle,
-            value="car",
-        ).pack(anchor="w", padx=20)
-        ttk.Radiobutton(
-            master,
-            text="Bike\nEco-friendly, slower than car.",
-            variable=self.vehicle,
-            value="bike",
-        ).pack(anchor="w", padx=20)
-        ttk.Radiobutton(
-            master,
-            text="Foot\nWalking, best for short distances.",
-            variable=self.vehicle,
-            value="foot",
-        ).pack(anchor="w", padx=20)
+        ttk.Radiobutton(left_frame, text="Car\nFastest travel by road", variable=self.vehicle, value="car").pack(anchor="w")
+        ttk.Radiobutton(left_frame, text="Bike\nEco-friendly, slower than car.", variable=self.vehicle, value="bike").pack(anchor="w")
+        ttk.Radiobutton(left_frame, text="Foot\nWalking, best for short distances.", variable=self.vehicle, value="foot").pack(anchor="w")
 
         # Starting Location
-        ttk.Label(master, text="Starting Location:").pack(
-            anchor="w", padx=10, pady=(10, 0)
-        )
-        self.start_location = ttk.Entry(master)
-        self.start_location.pack(fill="x", padx=10)
+        ttk.Label(left_frame, text="Starting Location:").pack(anchor="w", pady=(10, 0))
+        self.start_location = ttk.Entry(left_frame)
+        self.start_location.pack(fill="x", padx=5)
 
         # Destination
-        ttk.Label(master, text="Destination:").pack(anchor="w", padx=10, pady=(10, 0))
-        self.destination = ttk.Entry(master)
-        self.destination.pack(fill="x", padx=10)
+        ttk.Label(left_frame, text="Destination:").pack(anchor="w", pady=(10, 0))
+        self.destination = ttk.Entry(left_frame)
+        self.destination.pack(fill="x", padx=5)
 
         # Go Button
-        ttk.Button(
-            master, text="Go", command=self.geocoding, style="Black.TButton"
-        ).pack(fill="x", padx=10, pady=10)
+        ttk.Button(left_frame, text="Go", command=self.geocoding, style="Black.TButton").pack(fill="x", pady=10, padx=5)
 
         # Distance and Time
-        frame = ttk.Frame(master)
-        frame.pack(fill="x", padx=10)
+        frame = ttk.Frame(left_frame)
+        frame.pack(fill="x", padx=5)
 
         ttk.Label(frame, text="Distance:").grid(row=0, column=0, sticky="w")
         self.distance = ttk.Entry(frame, width=10)
         self.distance.grid(row=0, column=1, padx=(0, 10))
 
-        ttk.Label(frame, text="Estimated Time of Travel").grid(
-            row=0, column=2, sticky="w"
-        )
+        ttk.Label(frame, text="Estimated Time of Travel").grid(row=0, column=2, sticky="w")
         self.time = ttk.Entry(frame, width=10)
         self.time.grid(row=0, column=3)
 
         # Directions
-        ttk.Label(master, text="Directions:").pack(anchor="w", padx=10, pady=(10, 0))
-        self.directions = tk.Text(master, height=5)
-        self.directions.pack(fill="x", padx=10)
+        ttk.Label(left_frame, text="Directions:").pack(anchor="w", pady=(10, 0))
+        self.directions = tk.Text(left_frame, height=5)
+        self.directions.pack(fill="both", expand=True, padx=5)
 
         # Reset Button
-        ttk.Button(
-            master,
-            text="Go for another travel (RESET)",
-            command=self.reset,
-            style="Black.TButton",
-        ).pack(fill="x", padx=10, pady=10)
+        ttk.Button(left_frame, text="Go for another travel (RESET)", command=self.reset, style="Black.TButton").pack(fill="x", pady=10, padx=5)
+
+        # Map placeholder
+        self.map_placeholder = tk.Canvas(right_frame, bg="lightgray")
+        self.map_placeholder.pack(fill=tk.BOTH, expand=True)
+        self.map_placeholder.create_text(300, 300, text="Map Placeholder (2/3 width)", font=("Arial", 20))
 
     def geocoding(self):
         key = "9883cac5-0db3-4446-8507-a59b80acf13d"  # change to other api key
