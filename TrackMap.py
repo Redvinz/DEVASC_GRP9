@@ -9,7 +9,7 @@ class TrackMapApp:
     def __init__(self, master):
         self.master = master
         master.title("TrackMap")
-        master.geometry("1200x900")
+        master.geometry("1200x850")
         master.resizable(True, True)
 
         # Configure style
@@ -99,7 +99,7 @@ class TrackMapApp:
         # Reset Button
         ttk.Button(
             self.left_frame, text="Reset", command=self.reset, style="TButton"
-        ).pack(fill="x", pady=10)
+        ).pack(fill="x", pady=0)
 
         # History Button (button opens a new window)
         ttk.Button(
@@ -107,7 +107,7 @@ class TrackMapApp:
             text="History",
             command=self.open_history_window,
             style="TButton",
-        ).pack(fill="x", pady=20)
+        ).pack(fill="x", pady=5)
 
         # Map
         self.map = tkintermapview.TkinterMapView(self.right_frame, corner_radius=0)
@@ -222,7 +222,7 @@ class TrackMapApp:
             self.directions.insert(tk.END, text + "\n")
 
     def reset(self):
-    # Reset fields
+        # Reset fields
         self.start_location.delete(0, "end")
         self.dest_location.delete(0, "end")
         self.start_coords.delete(0, "end")
@@ -231,11 +231,10 @@ class TrackMapApp:
         self.vehicle.set("car")
         self.map.delete_all_marker()
         self.map.set_position(14.61012695, 120.9892056708045)
-    
-    # Check if path exists before deleting it
-        if hasattr(self, 'path') and self.path:
-            self.path.delete()
 
+        # Check if path exists before deleting it
+        if hasattr(self, "path") and self.path:
+            self.path.delete()
 
     def open_history_window(self):
         # new Toplevel window
