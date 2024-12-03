@@ -1,12 +1,13 @@
 import unittest
 import tkinter as tk
 from tkinter import ttk
-import TrackMap  # Import the main application class
+from TrackMap import TrackMapApp
+  # Import the main application class
 
 class TestTrackMapApp(unittest.TestCase):
     def setUp(self):
         self.root = tk.Tk()
-        self.app = TrackMap(self.root)
+        self.app = TrackMapApp(self.root)
 
     def test_geocoding_valid_location(self):
         # Test geocoding with valid locations
