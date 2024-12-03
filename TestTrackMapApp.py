@@ -14,6 +14,8 @@ class TestTrackMapApp(unittest.TestCase):
         self.app.dest_location.insert(0, "Quezon City, Philippines")
         
         self.app.geocoding()
+
+        
         
         # Check if coordinates are populated
         start_coords = self.app.start_coords.get()
