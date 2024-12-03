@@ -9,57 +9,75 @@ class TrackMapApp:
     def __init__(self, master):
         self.master = master
         master.title("TrackMap")
-        master.geometry("1200x840")
+        master.geometry("1200x900")
         master.resizable(True, True)
-        
+
         # Configure style
         self.style = ttk.Style()
         self.style.theme_use("clam")
         self.configure_styles()
-        
+
         # Create main frames
         self.create_frames()
-        
+
         # Create widgets
         self.create_widgets()
 
     def configure_styles(self):
         self.style.configure("TFrame", background="#f0f0f0")
         self.style.configure("TLabel", background="#f0f0f0", font=("Helvetica", 10))
-        self.style.configure("TRadiobutton", background="#f0f0f0", font=("Helvetica", 10))
+        self.style.configure(
+            "TRadiobutton", background="#f0f0f0", font=("Helvetica", 10)
+        )
         self.style.configure("TEntry", font=("Helvetica", 10))
         self.style.configure("TButton", font=("Helvetica", 10, "bold"))
-        self.style.configure("Title.TLabel", font=("Helvetica", 24, "bold"), foreground="#333333")
-        self.style.configure("Subtitle.TLabel", font=("Helvetica", 12), foreground="#666666")
-        self.style.configure("Section.TLabel", font=("Helvetica", 12, "bold"), foreground="#333333")
+        self.style.configure(
+            "Title.TLabel", font=("Helvetica", 24, "bold"), foreground="#333333"
+        )
+        self.style.configure(
+            "Subtitle.TLabel", font=("Helvetica", 12), foreground="#666666"
+        )
+        self.style.configure(
+            "Section.TLabel", font=("Helvetica", 12, "bold"), foreground="#333333"
+        )
 
     def create_frames(self):
         self.main_frame = ttk.Frame(self.master)
         self.main_frame.pack(fill=tk.BOTH, expand=True)
-        
+
         self.left_frame = ttk.Frame(self.main_frame, padding="20")
         self.left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=False)
-        
+
         self.right_frame = ttk.Frame(self.main_frame)
         self.right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
     def create_widgets(self):
         # Title and subtitle
-        ttk.Label(self.left_frame, text="TrackMap", style="Title.TLabel").pack(pady=(0, 5))
-        ttk.Label(self.left_frame, text="Powered by GraphHopper Pro", style="Subtitle.TLabel").pack(pady=(0, 20))
+        ttk.Label(self.left_frame, text="TrackMap", style="Title.TLabel").pack(
+            pady=(0, 5)
+        )
+        ttk.Label(
+            self.left_frame, text="Powered by GraphHopper Pro", style="Subtitle.TLabel"
+        ).pack(pady=(0, 20))
 
         # Vehicle selection
-        ttk.Label(self.left_frame, text="Vehicle Profile", style="Section.TLabel").pack(anchor="w", pady=(10, 5))
+        ttk.Label(self.left_frame, text="Vehicle Profile", style="Section.TLabel").pack(
+            anchor="w", pady=(10, 5)
+        )
         self.vehicle = tk.StringVar(value="car")
         for value, text in [("car", "Car"), ("bike", "Bike"), ("foot", "Foot")]:
-            ttk.Radiobutton(self.left_frame, text=text, variable=self.vehicle, value=value).pack(anchor="w", padx=10)
+            ttk.Radiobutton(
+                self.left_frame, text=text, variable=self.vehicle, value=value
+            ).pack(anchor="w", padx=10)
 
         # Location inputs
         self.create_location_input("Starting Location", self.left_frame, "start")
         self.create_location_input("Destination", self.left_frame, "dest")
 
         # Go Button
-        ttk.Button(self.left_frame, text="Find Route", command=self.geocoding, style="TButton").pack(fill="x", pady=20)
+        ttk.Button(
+            self.left_frame, text="Find Route", command=self.geocoding, style="TButton"
+        ).pack(fill="x", pady=20)
 
         # Results frame
         self.results_frame = ttk.Frame(self.left_frame)
@@ -70,23 +88,39 @@ class TrackMapApp:
         self.create_result_field("Est. Travel Time:", "time")
 
         # Directions
-        ttk.Label(self.left_frame, text="Directions:", style="Section.TLabel").pack(anchor="w", pady=(20, 5))
-        self.directions = tk.Text(self.left_frame, height=10, width=40, wrap=tk.WORD, font=("Helvetica", 10))
+        ttk.Label(self.left_frame, text="Directions:", style="Section.TLabel").pack(
+            anchor="w", pady=(20, 5)
+        )
+        self.directions = tk.Text(
+            self.left_frame, height=10, width=40, wrap=tk.WORD, font=("Helvetica", 10)
+        )
         self.directions.pack(fill="x")
 
         # Reset Button
-        ttk.Button(self.left_frame, text="Reset", command=self.reset, style="TButton").pack(fill="x", pady=20)
+        ttk.Button(
+            self.left_frame, text="Reset", command=self.reset, style="TButton"
+        ).pack(fill="x", pady=10)
+
+        # History Button (button opens a new window)
+        ttk.Button(
+            self.left_frame,
+            text="History",
+            command=self.open_history_window,
+            style="TButton",
+        ).pack(fill="x", pady=20)
 
         # Map
         self.map = tkintermapview.TkinterMapView(self.right_frame, corner_radius=0)
         self.map.pack(fill=tk.BOTH, expand=True)
-        self.map.set_position(14.61012695, 120.9892056708045)
+        self.map.set_position(14.61012695, 120.9892056708045)  # UST Coordinates
 
     def create_location_input(self, label, parent, prefix):
-        ttk.Label(parent, text=label, style="Section.TLabel").pack(anchor="w", pady=(20, 5))
+        ttk.Label(parent, text=label, style="Section.TLabel").pack(
+            anchor="w", pady=(20, 5)
+        )
         setattr(self, f"{prefix}_location", ttk.Entry(parent))
         getattr(self, f"{prefix}_location").pack(fill="x")
-        
+
         coord_frame = ttk.Frame(parent)
         coord_frame.pack(fill="x", pady=(5, 0))
         ttk.Label(coord_frame, text="Lat, Long:").pack(side=tk.LEFT)
@@ -99,7 +133,6 @@ class TrackMapApp:
         ttk.Label(frame, text=label).pack(side=tk.LEFT)
         setattr(self, attr_name, ttk.Label(frame, width=15))
         getattr(self, attr_name).pack(side=tk.RIGHT)
-
 
     def geocoding(self):
         key = "9883cac5-0db3-4446-8507-a59b80acf13d"  # change to other api key
@@ -118,7 +151,7 @@ class TrackMapApp:
 
                 self.dest_coords.delete(0, tk.END)
                 self.dest_coords.insert(0, f"{dest[0]:.6f}, {dest[1]:.6f}")
-                
+
                 self.map.set_position(orig[0], orig[1])
                 self.start_marker = self.map.set_marker(orig[0], orig[1], text="Start")
                 self.finish_marker = self.map.set_marker(dest[0], dest[1], text="End")
@@ -128,7 +161,10 @@ class TrackMapApp:
                     distance_km = route_data["distance"] / 1000
                     time_sec = route_data["time"] / 10
                     self.display_route_info(
-                        distance_km, time_sec, route_data["instructions"], route_data['path_points']
+                        distance_km,
+                        time_sec,
+                        route_data["instructions"],
+                        route_data["path_points"],
                     )
 
     def get_geocoding_data(self, location, key):
@@ -160,13 +196,15 @@ class TrackMapApp:
                 "distance": data["paths"][0]["distance"],
                 "time": data["paths"][0]["time"],
                 "instructions": data["paths"][0]["instructions"],
-                "path_points" : data["paths"][0]["points"]["coordinates"],
+                "path_points": data["paths"][0]["points"]["coordinates"],
             }
         return None
 
     def display_route_info(self, distance_km, time_sec, instructions, path_points):
-        self.path = self.map.set_path([self.start_marker.position, self.start_marker.position])
-        
+        self.path = self.map.set_path(
+            [self.start_marker.position, self.start_marker.position]
+        )
+
         for long, lat in path_points:
             self.path.add_position(lat, long)
 
@@ -199,8 +237,46 @@ class TrackMapApp:
             self.path.delete()
 
 
+    def open_history_window(self):
+        # new Toplevel window
+        history_window = tk.Toplevel(self.master)
+        history_window.title("History")
+        history_window.geometry("600x400")
+        history_window.resizable(False, False)
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = TrackMapApp(root)
-    root.mainloop()
+        # add title label
+        ttk.Label(history_window, text="Route History", style="Title.TLabel").pack(
+            pady=10
+        )
+
+        # test treeview
+        columns = ("Start Location", "Destination", "Vehicle", "Distance", "Time")
+        tree = ttk.Treeview(history_window, columns=columns, show="headings")
+        tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+        # column headings
+        for col in columns:
+            tree.heading(col, text=col)
+            tree.column(col, width=100, anchor="center")
+
+        # dummy data for demonstration. read data off csv file
+        demo_data = [
+            ("New York", "Los Angeles", "Car", "4500 km", "40:30"),
+            ("London", "Paris", "Bike", "344 km", "20:15"),
+        ]
+        for row in demo_data:
+            tree.insert("", "end", values=row)
+
+        # Close button
+        ttk.Button(
+            history_window,
+            text="Close",
+            command=history_window.destroy,
+            style="TButton",
+        ).pack(pady=10)
+
+
+if __name__ == "__main__":  # checks if script is run directly (not a module)
+    root = tk.Tk()  # call Tkinter constructor and assign root window to root
+    app = TrackMapApp(root)  # the root is now the parent container for the app
+    root.mainloop()  # needed to keep the interface running
