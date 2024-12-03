@@ -15,8 +15,6 @@ class TestTrackMapApp(unittest.TestCase):
         
         self.app.geocoding()
 
-
-
         # Check if coordinates are populated
         start_coords = self.app.start_coords.get()
         dest_coords = self.app.dest_coords.get()
