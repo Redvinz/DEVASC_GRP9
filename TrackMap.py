@@ -234,28 +234,28 @@ class TrackMapApp:
         self.path.delete()
 
     def open_history_window(self):
-        # Create a new Toplevel window
+        # new Toplevel window
         history_window = tk.Toplevel(self.master)
         history_window.title("History")
         history_window.geometry("600x400")
-        history_window.resizable(True, True)
+        history_window.resizable(False, False)
 
-        # Add a label for the title
+        # add title label
         ttk.Label(history_window, text="Route History", style="Title.TLabel").pack(
             pady=10
         )
 
-        # Add a Treeview or Listbox to display history (example using Treeview)
+        # test treeview
         columns = ("Start Location", "Destination", "Vehicle", "Distance", "Time")
         tree = ttk.Treeview(history_window, columns=columns, show="headings")
         tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-        # Set column headings
+        # column headings
         for col in columns:
             tree.heading(col, text=col)
             tree.column(col, width=100, anchor="center")
 
-        # Add some dummy data for demonstration (replace with actual history data later)
+        # dummy data for demonstration. read data off csv file
         demo_data = [
             ("New York", "Los Angeles", "Car", "4500 km", "40:30"),
             ("London", "Paris", "Bike", "344 km", "20:15"),
@@ -263,7 +263,7 @@ class TrackMapApp:
         for row in demo_data:
             tree.insert("", "end", values=row)
 
-        # Add a Close button
+        # Close button
         ttk.Button(
             history_window,
             text="Close",
