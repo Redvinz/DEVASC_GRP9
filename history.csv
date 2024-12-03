@@ -1,0 +1,3 @@
+vehicle,start_loc,destination,distance,time
+Car,New York,Los Angeles,4500 km,40:30
+Bike,London,Paris,344 km,20:15
