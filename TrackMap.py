@@ -184,7 +184,7 @@ class TrackMapApp:
             self.directions.insert(tk.END, text + "\n")
 
     def reset(self):
-        # Reset fields
+    # Reset fields
         self.start_location.delete(0, "end")
         self.dest_location.delete(0, "end")
         self.start_coords.delete(0, "end")
@@ -193,7 +193,11 @@ class TrackMapApp:
         self.vehicle.set("car")
         self.map.delete_all_marker()
         self.map.set_position(14.61012695, 120.9892056708045)
-        self.path.delete()
+    
+    # Check if path exists before deleting it
+        if hasattr(self, 'path') and self.path:
+            self.path.delete()
+
 
 
 if __name__ == "__main__":
