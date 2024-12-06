@@ -3,7 +3,7 @@ from tkinter import ttk
 import requests
 import urllib.parse
 import tkintermapview
-
+import csv
 
 class TrackMapApp:
     def __init__(self, master):
@@ -87,15 +87,6 @@ class TrackMapApp:
         self.create_result_field("Distance:", "distance")
         self.create_result_field("Est. Travel Time:", "time")
 
-        # Directions
-        ttk.Label(self.left_frame, text="Directions:", style="Section.TLabel").pack(
-            anchor="w", pady=(20, 5)
-        )
-        self.directions = tk.Text(
-            self.left_frame, height=10, width=40, wrap=tk.WORD, font=("Helvetica", 10)
-        )
-        self.directions.pack(fill="x")
-
         # Reset Button
         ttk.Button(
             self.left_frame, text="Reset", command=self.reset, style="TButton"
@@ -108,6 +99,15 @@ class TrackMapApp:
             command=self.open_history_window,
             style="TButton",
         ).pack(fill="x", pady=5)
+
+        # Directions
+        ttk.Label(self.left_frame, text="Directions:", style="Section.TLabel").pack(
+            anchor="w", pady=(20, 5)
+        )
+        self.directions = tk.Text(
+            self.left_frame, height=10, width=40, wrap=tk.WORD, font=("Helvetica", 10)
+        )
+        self.directions.pack(fill="x")
 
         # Map
         self.map = tkintermapview.TkinterMapView(self.right_frame, corner_radius=0)
@@ -166,6 +166,24 @@ class TrackMapApp:
                         route_data["instructions"],
                         route_data["path_points"],
                     )
+
+                    self.write_to_csv(
+                        vehicle, 
+                        start_location, 
+                        destination, 
+                        distance_km, 
+                        time_sec
+                    )
+
+    def write_to_csv(self, vehicle, start_loc, destination, distance, est):
+        hours = int(est // 3600)
+        minutes = int((est % 3600) // 60)
+        time = f"{hours:02d}:{minutes:02d}"
+        row = [vehicle, start_loc, destination, distance, time]
+
+        with open('history.csv', mode='a') as file:
+            writer = csv.writer(file)
+            writer.writerow(row)
 
     def get_geocoding_data(self, location, key):
         geocode_url = "https://graphhopper.com/api/1/geocode?"
@@ -249,7 +267,7 @@ class TrackMapApp:
         )
 
         # test treeview
-        columns = ("Start Location", "Destination", "Vehicle", "Distance", "Time")
+        columns = ("Vehicle", "Start Location", "Destination", "Distance", "EST")
         tree = ttk.Treeview(history_window, columns=columns, show="headings")
         tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
@@ -263,8 +281,14 @@ class TrackMapApp:
             ("New York", "Los Angeles", "Car", "4500 km", "40:30"),
             ("London", "Paris", "Bike", "344 km", "20:15"),
         ]
-        for row in demo_data:
-            tree.insert("", "end", values=row)
+        
+        with open('history.csv', mode='r') as file:
+            csvFile = csv.reader(file)  
+            
+            next(csvFile) #skip header line
+
+            for row in csvFile:  
+                tree.insert("", "end", values=row)  
 
         # Close button
         ttk.Button(
